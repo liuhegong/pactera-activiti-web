@@ -1,0 +1,303 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.pactera</groupId>
+  <artifactId>pactera-activiti-web</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>pactera-activiti-web Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <junit-version>4.12</junit-version>
+    <!-- spring版本号 -->
+    <spring-version>4.2.6.RELEASE</spring-version>
+    <!-- javax.servlet版本号 -->
+    <servlet-version>3.1.0</servlet-version>
+    <!-- javax.servlet.jsp版本号 -->
+    <jsp-api-version>2.1</jsp-api-version>
+    <!-- jstl-version版本号 -->
+    <jstl-version>1.2</jstl-version>
+    <standard.version>1.1.2</standard.version>
+    <!-- mybatis-version版本号 -->
+    <mybatis-version>3.3.0</mybatis-version>
+    <!-- mybatis-spring-version版本号 -->
+    <mybatis-spring-version>1.3.0</mybatis-spring-version>
+    <!-- mybatis-connector-version版本号 -->
+    <mysql-connector-version>5.1.18</mysql-connector-version>
+    <!-- Log4j-version版本号 -->
+    <log4j-version>1.2.17</log4j-version>
+    <!-- log4j日志文件管理包版本 -->
+    <slf4j-version>1.7.21</slf4j-version>
+    <!-- DruidDataSource -->
+    <druid-version>1.0.20</druid-version>
+    <jackson-version>1.9.13</jackson-version>
+    <sitemesh-version>3.0.1</sitemesh-version>
+    <activiti.version>5.22.0</activiti.version>
+    <ehcache.version>2.8.3</ehcache.version>
+  </properties>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>2.6</version>
+    </dependency>
+
+    <!-- Spring 依赖库 -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring-version}</version>
+      <exclusions><!-- 排除commons-logging依赖 -->
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency><!-- Spring 上下文容器支持库 -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
+    <dependency><!-- Spring ORM 依赖 -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
+    <dependency><!-- Spring 切面 依赖 -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
+    <dependency><!-- Spring 事务 依赖 -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
+    <dependency><!-- Spring JDBC -->
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
+    <!-- Spring MVC 依赖 -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring-version}</version>
+    </dependency>
+    <!-- Mybatis-Spirng -->
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis-spring</artifactId>
+      <version>${mybatis-spring-version}</version>
+    </dependency>
+    <!-- Spring上传文件默认是与 commons-fileupload 整合，这里加入它的库 -->
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>1.3.2</version>
+    </dependency>
+      <!-- Mybatis -->
+      <dependency>
+          <groupId>org.mybatis</groupId>
+          <artifactId>mybatis</artifactId>
+          <version>${mybatis-version}</version>
+      </dependency>
+      <!-- mysql 依赖 -->
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>${mysql-connector-version}</version>
+      </dependency>
+      <!-- DruidDataSource -->
+      <dependency>
+          <groupId>com.alibaba</groupId>
+          <artifactId>druid</artifactId>
+          <version>${druid-version}</version>
+      </dependency>
+      <!-- activiti框架 -->
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-engine</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-spring</artifactId>
+          <version>${activiti.version}</version>
+          <exclusions>
+              <exclusion>
+                  <artifactId>commons-dbcp</artifactId>
+                  <groupId>commons-dbcp</groupId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
+          <version>1.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-bpmn-model</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-bpmn-converter</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-bpmn-layout</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-common-rest</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-crystalball</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-diagram-rest</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-explorer</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-image-generator</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-json-converter</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-modeler</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-simple-workflow</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.activiti</groupId>
+          <artifactId>activiti-process-validation</artifactId>
+          <version>${activiti.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.xmlgraphics</groupId>
+          <artifactId>xmlgraphics-commons</artifactId>
+          <version>1.2</version>
+      </dependency>
+      <dependency>
+          <groupId>com.vaadin</groupId>
+          <artifactId>vaadin</artifactId>
+          <version>6.8.8</version>
+      </dependency>
+      <dependency>
+          <groupId>org.imgscalr</groupId>
+          <artifactId>imgscalr-lib</artifactId>
+          <version>4.2</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.xmlgraphics</groupId>
+          <artifactId>batik-awt-util</artifactId>
+          <version>1.7</version>
+      </dependency>
+      <!-- Editor -->
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+          <version>2.2.3</version>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+          <version>2.2.3</version>
+      </dependency>
+      <dependency>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+          <version>2.2.3</version>
+      </dependency>
+      <!-- Json序列/反序列工具库 选用jackson 因为Spring的@Response注解默认整合jackson -->
+      <dependency>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-mapper-asl</artifactId>
+          <version>${jackson-version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.alibaba</groupId>
+          <artifactId>fastjson</artifactId>
+          <version>1.2.9</version>
+      </dependency>
+      <!-- 网页布局和修饰的框架 -->
+      <dependency>
+          <groupId>org.sitemesh</groupId>
+          <artifactId>sitemesh</artifactId>
+          <version>${sitemesh-version}</version>
+      </dependency>
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>${junit-version}</version>
+          <scope>test</scope>
+      </dependency>
+      <!-- Servlet-API -->
+      <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>javax.servlet-api</artifactId>
+          <version>${servlet-version}</version>
+          <scope>provided</scope> <!-- 服务器会提供，故此处作用域设置为provide -->
+      </dependency>
+      <dependency>
+          <groupId>javax.servlet</groupId>
+          <artifactId>jstl</artifactId>
+          <version>${jstl-version}</version>
+      </dependency>
+      <dependency>
+          <groupId>taglibs</groupId>
+          <artifactId>standard</artifactId>
+          <version>${standard.version}</version>
+      </dependency>
+      <!-- 引入ehcache缓存 -->
+      <dependency>
+          <groupId>net.sf.ehcache</groupId>
+          <artifactId>ehcache</artifactId>
+          <version>${ehcache.version}</version>
+      </dependency>
+    <!-- 依赖配置END -->
+  </dependencies>
+  <build>
+    <finalName>pactera-activiti-web</finalName>
+      <pluginManagement>
+          <plugins>
+              <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-compiler-plugin</artifactId>
+                  <configuration>
+                      <source>1.8</source>
+                      <target>1.8</target>
+                  </configuration>
+              </plugin>
+          </plugins>
+      </pluginManagement>
+  </build>
+</project>
