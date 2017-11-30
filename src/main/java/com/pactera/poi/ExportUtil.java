@@ -226,12 +226,12 @@ public class ExportUtil {
    */
    public SXSSFWorkbook export() throws Exception {
       String nsheetName = sheetName;
-      Integer rowaccess = 1000;// 内存中缓存记录行数，以免内存溢出
+      Integer rowaccess = 2000;// 内存中缓存记录行数，以免内存溢出
       SXSSFWorkbook workbook = new SXSSFWorkbook(rowaccess);
       try {
          //按sheet页存储，如果存储于一个sheet,去除此处
          int index = 0;
-         int sheetNum = dataList.size()%100000==0?dataList.size()/100000:dataList.size()/100000+1;
+         int sheetNum = (int) Math.ceil(dataList.size()/100000);
          for (int i=1;i<=sheetNum;i++){
             Sheet sheet = workbook.createSheet(nsheetName+"_"+i);
             // 产生表格标题行

@@ -3,7 +3,6 @@
 <c:set scope="request" var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
-    <meta charset="utf-8">
     <style type="text/css">
         .line{display: inline-block;width: 100px;text-align: right}
     </style>
@@ -32,7 +31,16 @@
     </form>
 </div>
 
-<h2>大批量导出测试</h2>
-<div><a href="${ctx}/poi/export" style="text-decoration-line: none">测试</a> </div>
+<h2>大批量导出\入测试</h2>
+<div><a href="${ctx}/poi/export" style="text-decoration-line: none">测试导出</a> </div>
+<div>
+    <label>测试导入</label>
+    <form action="${ctx}/poi/import" enctype="multipart/form-data" method="post">
+        <input type="file" id="file"/>
+        <input type="submit" value="提交"/>
+    </form>
+</div>
+<script type="text/javascript">
+</script>
 </body>
 </html>

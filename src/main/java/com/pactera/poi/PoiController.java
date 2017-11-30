@@ -1,9 +1,20 @@
 package com.pactera.poi;
 
+import com.alibaba.fastjson.JSON;
+import com.pactera.mybatis.dao.UserMapper;
+import com.pactera.mybatis.model.User;
+import com.pactera.utils.BatchOperation;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -17,6 +28,11 @@ import java.util.Map;
 @Controller
 @RequestMapping("/poi")
 public class PoiController {
+
+   @Autowired
+   private UserMapper userMapper;
+   @Autowired
+   private SqlSessionFactory sqlSessionFactory;
 
    @RequestMapping("/export")
    public void export(HttpServletResponse response) throws Exception {
@@ -61,8 +77,57 @@ public class PoiController {
          map.put("id",i);
          map.put("name","王建伟"+i);
          map.put("sex","男");
-         map.put("address","北京市昌平区中西医结合医院家属楼");
          list.add(map);
+      }
+      return list;
+   }
+   /**
+    * 导入
+    */
+   @ResponseBody
+   @RequestMapping("/import")
+   public String importExcel(HttpServletRequest request){
+      List<User> list = new ArrayList<>();
+      Map<String,Object> map = new HashMap<>();
+      try {
+         String path = ImportUtil.getPath(request);
+         Workbook book = ImportUtil.getWB(path);
+         list = getDataList(book);
+         saveData(sqlSessionFactory,list);
+         map.put("status","success");
+         map.put("message","导入成功");
+      }catch (Exception e){
+         map.put("status","failure");
+         map.put("message","导入失败");
+      }
+      return JSON.toJSONString(map);
+   }
+
+   private void saveData(SqlSessionFactory sqlSessionFactory, List<User> list) {
+      String pack = userMapper.getClass().getPackage().getName();
+      String cla = userMapper.getClass().getName();
+      String method = "insertBatch";
+      StringBuilder sql = new StringBuilder();
+      sql.append(pack).append(".").append(cla).append(".").append(method);
+      BatchOperation.batchCommit(sqlSessionFactory,sql.toString(),list);
+   }
+
+   private List<User> getDataList(Workbook book) {
+      List<User> list = new ArrayList<>();
+      Sheet sheet = book.getSheetAt(0);
+      for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+         Row row = sheet.getRow(i);
+         if (row == null){
+            continue;
+         }
+         //此处可以判断列的类型....
+         //对列数据进行验证....
+         String name = row.getCell(2).getStringCellValue();
+         String sex = row.getCell(3).getStringCellValue();
+         User user = new User();
+         user.setName(name);
+         user.setSex(sex);
+         list.add(user);
       }
       return list;
    }

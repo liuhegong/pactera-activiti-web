@@ -4,7 +4,8 @@
 <head>
     <title><sitemesh:write property="title"/></title>
     <meta charset="UTF-8" name="viewport" http-equiv="X-UA-Compatible" content="IE=edge" content="width=device-width, initial-scale=1.0">
-    <script src="${ctx }/common/js/jquery-1.9.1.min.js"></script>
+    <script src="${ctx}/common/js/jquery-1.9.1.min.js"></script>
+    <script src="${ctx}/common/js/ajaxfileupload.js" type="text/javascript"></script>
     <%--<link rel="stylesheet" type="text/css" href="${ctx }/css/component.css">--%>
 
     <sitemesh:write property="head"/>

@@ -9,6 +9,5 @@
 
     <!-- 指明满足“/exclude.jsp*”的页面，将被排除，不被装饰 -->
 	<mapping path="/login" exclue="true" />
-	<mapping path="/user/userSelect" exclue="true" />
-    
+
 </sitemesh>
