@@ -31,5 +31,8 @@
         <input type="submit" value="提交">
     </form>
 </div>
+
+<h2>大批量导出测试</h2>
+<div><a href="${ctx}/poi/export" style="text-decoration-line: none">测试</a> </div>
 </body>
 </html>
