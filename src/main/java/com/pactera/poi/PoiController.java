@@ -1,9 +1,9 @@
 package com.pactera.poi;
 
 import com.alibaba.fastjson.JSON;
-import com.pactera.mybatis.dao.UserMapper;
 import com.pactera.mybatis.model.User;
-import com.pactera.utils.BatchOperation;
+import com.pactera.poi.importExcel.XxlsPrint;
+import com.pactera.service.self.BatchCommitService;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -30,16 +30,16 @@ import java.util.Map;
 public class PoiController {
 
    @Autowired
-   private UserMapper userMapper;
+   private BatchCommitService batchCommitService;
    @Autowired
    private SqlSessionFactory sqlSessionFactory;
 
    @RequestMapping("/export")
    public void export(HttpServletResponse response) throws Exception {
-      String[] titles = {"ID","姓名","性别","地址"};
+      String[] titles = {"ID","姓名","性别"};
       String name = "测试大批量导出报表";
       String title = new String(name.getBytes("gb2312"), "ISO8859-1");
-      String sheetName = new String(name.getBytes(), "UTF-8");
+      String sheetName = new String("测试".getBytes(), "UTF-8");
       OutputStream outputStream = response.getOutputStream();
       response.reset();
       response.setCharacterEncoding("UTF-8");
@@ -55,6 +55,7 @@ public class PoiController {
       System.out.println("写入excel耗时："+(end-start)/1000+"秒");
       outputStream.flush();
       outputStream.close();
+      workBook.close();
    }
    /**
     * 封装数据
@@ -81,8 +82,11 @@ public class PoiController {
       }
       return list;
    }
+
    /**
     * 导入
+    * @param request
+    * @return
     */
    @ResponseBody
    @RequestMapping("/import")
@@ -91,9 +95,13 @@ public class PoiController {
       Map<String,Object> map = new HashMap<>();
       try {
          String path = ImportUtil.getPath(request);
-         Workbook book = ImportUtil.getWB(path);
-         list = getDataList(book);
-         saveData(sqlSessionFactory,list);
+//         Workbook book = ImportUtil.getWB("F:\\1512107666545-测试大批量导出报表.xlsx");
+//         list = getDataList(book);
+         XxlsPrint howto = new XxlsPrint();
+         howto.processOneSheet(path,1);
+         List<User> list1 = howto.getList();
+         batchCommitService.save(list1);
+//         ExcelReader.read(path);
          map.put("status","success");
          map.put("message","导入成功");
       }catch (Exception e){
@@ -103,14 +111,6 @@ public class PoiController {
       return JSON.toJSONString(map);
    }
 
-   private void saveData(SqlSessionFactory sqlSessionFactory, List<User> list) {
-      String pack = userMapper.getClass().getPackage().getName();
-      String cla = userMapper.getClass().getName();
-      String method = "insertBatch";
-      StringBuilder sql = new StringBuilder();
-      sql.append(pack).append(".").append(cla).append(".").append(method);
-      BatchOperation.batchCommit(sqlSessionFactory,sql.toString(),list);
-   }
 
    private List<User> getDataList(Workbook book) {
       List<User> list = new ArrayList<>();

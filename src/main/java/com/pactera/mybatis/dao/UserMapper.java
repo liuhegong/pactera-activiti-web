@@ -2,6 +2,8 @@ package com.pactera.mybatis.dao;
 
 import com.pactera.mybatis.model.User;
 
+import java.util.List;
+
 public interface UserMapper {
     int deleteByPrimaryKey(Integer id);
 
@@ -14,4 +16,6 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    int insertBatch(List<User> list);
 }

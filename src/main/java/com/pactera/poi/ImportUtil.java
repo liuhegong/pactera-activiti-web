@@ -1,8 +1,7 @@
 package com.pactera.poi;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -10,6 +9,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -21,19 +21,20 @@ public class ImportUtil {
    //获取工作簿
    public static Workbook getWB(String file){
       Workbook wb = null;
-      FileInputStream fileInputStream=null;
+      InputStream inputStream=null;
       try {
-         fileInputStream = new FileInputStream(file);
+         inputStream = new FileInputStream(file);
+         wb = WorkbookFactory.create(inputStream);
          //2003版本的excel，用.xls结尾
-         wb = new HSSFWorkbook(fileInputStream);
+//         wb = new HSSFWorkbook(fileInputStream);
       }catch (Exception e){
-         try {
-            fileInputStream = new FileInputStream(file);
-            //2007版本的excel，用.xlsx结尾
-            wb = new XSSFWorkbook(fileInputStream);
-         }catch (Exception ee){
-            ee.printStackTrace();
-         }
+//         try {
+//            fileInputStream = new FileInputStream(file);
+//            //2007版本的excel，用.xlsx结尾
+//            wb = new XSSFWorkbook(fileInputStream);
+//         }catch (Exception ee){
+//            ee.printStackTrace();
+//         }
       }
       return wb;
    }
@@ -48,23 +49,25 @@ public class ImportUtil {
          if (resolver.isMultipart(request)){
             //将request变成多部分request
             MultipartHttpServletRequest multiRequest=(MultipartHttpServletRequest)request;
-            for (Iterator iter = multiRequest.getFileNames(); iter.hasNext();){
+            //获取multiRequest 中所有的文件名
+            Iterator iter=multiRequest.getFileNames();
+            while (iter.hasNext()){
                MultipartFile file = multiRequest.getFile(iter.next().toString());
                if (!file.isEmpty()){
-                  String fileName = file.getOriginalFilename();
+                  String fileName = new Date().getTime()+"-"+file.getOriginalFilename();
                   uploadPath = request.getSession().getServletContext().getRealPath(uploadPath);
                   File fpath = new File(uploadPath);
                   if (!fpath.exists()){
                      fpath.mkdirs();
                   }
-                  uploadPath = uploadPath+"/"+new Date().getTime()+fileName;
+                  uploadPath = uploadPath+"/"+fileName;
                   File fp = new File(uploadPath);
                   file.transferTo(fp);
                }
             }
          }
          long end = System.currentTimeMillis();
-         System.out.println("上传共耗时："+(end-start)+"毫秒");
+         System.out.println("上传共耗时："+(end-start)/1000+"秒");
       }catch (Exception e){
          e.printStackTrace();
       }

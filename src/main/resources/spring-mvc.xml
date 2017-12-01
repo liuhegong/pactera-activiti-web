@@ -12,10 +12,10 @@
     <!-- 扫描controller（controller层注入） -->
     <!--<context:component-scan base-package="com.pactera.controller"/>-->
     <!--加入Spring Activiti-Modeler的运行配置 -->
+    <context:component-scan base-package="com.pactera.poi"/>
     <context:component-scan base-package="com.pactera.activiti.rest.diagram"/>
     <context:component-scan base-package="com.pactera.activiti.rest.editor"/>
     <context:component-scan base-package="com.pactera.activiti.controller"/>
-    <context:component-scan base-package="com.pactera.poi"/>
 
     <mvc:annotation-driven>
         <!-- ResponseBody 乱码解决 -->

@@ -3,7 +3,6 @@ package com.pactera.poi;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -28,6 +27,8 @@ public class ExportUtil {
    private String sheetName;
 
    private String[] headers;
+
+   private int sheetCount=100000;
 
    private List<Map<String,Object>> dataList = new ArrayList<Map<String,Object>>();
 
@@ -57,6 +58,8 @@ public class ExportUtil {
    public CellStyle getHeadStyle() {
       // 创建单元格样式
       CellStyle cellStyle = wb.createCellStyle();
+      //打开时可编辑
+      cellStyle.setLocked(true);
       // 设置单元格的背景颜色为淡蓝色
       cellStyle.setFillForegroundColor(HSSFColor.PALE_BLUE.index);
       // 设置填充字体的样式
@@ -84,6 +87,8 @@ public class ExportUtil {
    public CellStyle getHeadStyle(SXSSFWorkbook workbook) {
       // 创建单元格样式
       CellStyle cellStyle = workbook.createCellStyle();
+      //打开时可编辑
+      cellStyle.setLocked(true);
       // 设置单元格的背景颜色为淡蓝色
       cellStyle.setFillForegroundColor(HSSFColor.PALE_BLUE.index);
       // 设置填充字体的样式
@@ -111,6 +116,8 @@ public class ExportUtil {
    public CellStyle getBodyStyle(SXSSFWorkbook workbook) {
       // 创建单元格样式
       CellStyle cellStyle = workbook.createCellStyle();
+      //打开时可编辑
+      cellStyle.setLocked(false);
       // 设置单元格居中对齐
       cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
       // 设置单元格居中对齐
@@ -135,6 +142,8 @@ public class ExportUtil {
    public CellStyle getBodyStyle() {
       // 创建单元格样式
       CellStyle cellStyle = wb.createCellStyle();
+      //打开时可编辑
+      cellStyle.setLocked(false);
       // 设置单元格居中对齐
       cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
       // 设置单元格居中对齐
@@ -226,39 +235,42 @@ public class ExportUtil {
    */
    public SXSSFWorkbook export() throws Exception {
       String nsheetName = sheetName;
-      Integer rowaccess = 2000;// 内存中缓存记录行数，以免内存溢出
+      Integer rowaccess = 1000;// 内存中缓存记录行数，以免内存溢出
       SXSSFWorkbook workbook = new SXSSFWorkbook(rowaccess);
       try {
          //按sheet页存储，如果存储于一个sheet,去除此处
-         int index = 0;
-         int sheetNum = (int) Math.ceil(dataList.size()/100000);
-         for (int i=1;i<=sheetNum;i++){
-            Sheet sheet = workbook.createSheet(nsheetName+"_"+i);
+         int sheetNum = (int) Math.ceil(dataList.size()/sheetCount);
+         int start,end;
+         Sheet sheet = null;
+         for (int i=0;i<sheetNum;i++){
+            start = i==0?1:i*sheetCount+1;
+            end = Math.min(i*sheetCount+sheetCount,dataList.size());
+            sheet = workbook.createSheet(nsheetName+"_"+i);
+            sheet.setDefaultColumnWidth(60);
             // 产生表格标题行
-            Row titleRow = sheet.createRow(0);
-            Cell cellTiltle = titleRow.createCell(0);
-            CellStyle columnTopStyle = this.getColumnTopStyle(workbook);// 获取列头样式对象
-            sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, (headers.length - 1)));
-            cellTiltle.setCellStyle(columnTopStyle);
-            cellTiltle.setCellValue(sheetName);
-            Cell cell = null;
-            CellStyle headStyle = this.getHeadStyle(workbook);
+//            Row titleRow = sheet.createRow(0);
+//            Cell cellTiltle = titleRow.createCell(0);
+//            CellStyle columnTopStyle = this.getColumnTopStyle(workbook);// 获取列头样式对象
+//            sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, (headers.length - 1)));
+//            cellTiltle.setCellStyle(columnTopStyle);
+//            cellTiltle.setCellValue(sheetName);
             // 定义所需列数
             int columnNum = headers.length;
-            Row headRow = sheet.createRow(2); // 在索引2的位置创建行(最顶端的行开始的第二行)
+            CellStyle headStyle = this.getHeadStyle(workbook);
+            Row headRow = sheet.createRow(0); // 在索引2的位置创建行(最顶端的行开始的第二行)
             //表头
             for (int n = 0; n < columnNum; n++) {
                Cell cellRowName = headRow.createCell(n); // 创建列头对应个数的单元格
                cellRowName.setCellType(HSSFCell.CELL_TYPE_STRING); // 设置列头单元格的数据类型
-               HSSFRichTextString text = new HSSFRichTextString(headers[n]);
                cellRowName.setCellValue(headers[n]); // 设置列头单元格的值
                cellRowName.setCellStyle(headStyle); // 设置列头单元格样式
             }
             CellStyle bodyStyle = this.getBodyStyle(workbook);
             // 表体数据
-            for (int ii = 0; ii < 100000; ii++) {
-               Map<String,Object> map = dataList.get(index);
-               Row row = sheet.createRow(ii + 3);// 创建所需的行数
+            Cell cell = null;
+            for (int ii = start; ii <= end; ii++) {
+               Map<String,Object> map = dataList.get(ii-1);
+               Row row = sheet.createRow(ii-i*sheetCount);// 创建所需的行数
                cell = row.createCell(0);
                cell.setCellValue(map.get("id").toString()); // 单元格的值
                cell.setCellStyle(bodyStyle); // 单元格的样式
@@ -268,10 +280,6 @@ public class ExportUtil {
                cell = row.createCell(2);
                cell.setCellValue(map.get("sex").toString()); // 单元格的值
                cell.setCellStyle(bodyStyle); // 单元格的样式
-               cell = row.createCell(3);
-               cell.setCellValue(map.get("address").toString()); // 单元格的值
-               cell.setCellStyle(bodyStyle); // 单元格的样式
-               index++;
             }
          }
       } catch (Exception e) {

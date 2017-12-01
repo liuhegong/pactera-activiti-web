@@ -68,4 +68,11 @@
       sex = #{sex,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <insert id="insertBatch" parameterType="java.util.List">
+    INSERT  INTO (name,sex)
+    VALUES
+    <foreach collection="list" item="item" open="(" close=")" separator=",">
+      #{item.name},#{item.sex}
+    </foreach>
+  </insert>
 </mapper>

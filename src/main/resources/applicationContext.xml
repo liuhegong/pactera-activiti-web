@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/beans/spring-beans.xsd 
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd">
-    <!-- 自动扫描kxm包 ,将带有注解的类 纳入spring容器管理 -->
+    <!-- 自动扫描包 ,将带有注解的类 纳入spring容器管理 -->
     <context:component-scan base-package="com.pactera"></context:component-scan>
     <!-- 引入配置文件 -->
     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -32,7 +32,13 @@
           p:configLocation="classpath:mybatis-config.xml"
           p:mapperLocations="classpath:com/pactera/mybatis/mapper/*.xml"
     />
-
+    <bean id="batchOperation" class="com.pactera.utils.BatchOperation">
+        <property name="sqlSession" ref="sqlSession"/>
+    </bean>
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="sqlSessionFactory" />
+        <constructor-arg index="1" value="BATCH" />
+    </bean>
     <!-- spring与mybatis整合配置，扫描所有dao -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"
           p:basePackage="com.pactera.mybatis.dao"
@@ -59,7 +65,7 @@
 
     <!-- 事务 aop 配置 -->
     <aop:config>
-        <aop:pointcut id="serviceMethods" expression="execution(* com.pactera.service..*(..))"/>
+        <aop:pointcut id="serviceMethods" expression="execution(* com.pactera.service..*(..)) and !execution(* com.pactera.service.self..*(..)))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethods"/>
     </aop:config>
 

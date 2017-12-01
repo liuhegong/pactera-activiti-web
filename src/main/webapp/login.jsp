@@ -36,7 +36,7 @@
 <div>
     <label>测试导入</label>
     <form action="${ctx}/poi/import" enctype="multipart/form-data" method="post">
-        <input type="file" id="file"/>
+        <input type="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"/>
         <input type="submit" value="提交"/>
     </form>
 </div>
